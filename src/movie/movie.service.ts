@@ -1,44 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-
-interface Movie {
-  title: string;
-  backdrop_path: string;
-  overview: string;
-}
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MovieService {
+  constructor(private readonly prismaService: PrismaService) {}
+
   async getMovies() {
-    const token = process.env.IMDB_TOKEN;
-    const movies = await axios.get(
-      'https://api.themoviedb.org/3/discover/movie',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    return movies?.data?.results;
-  }
-
-  async getMoviesTrim() {
-    const movies = await this.getMovies();
-    const newMovies = [];
-    movies.map((movie: Movie) => {
-      return newMovies.push({
-        title: movie.title,
-        image: `https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`,
-        overview: movie.overview,
-      });
-    });
-    return newMovies;
+    const movies = await this.prismaService.movie.findMany();
+    return movies;
   }
 
   async getRandomMovies(size: number) {
-    const movies = await this.getMoviesTrim();
+    const movies = await this.getMovies();
 
     // Shuffle the array using the Fisher-Yates algorithm.
     for (let i = movies.length - 1; i > 0; i--) {
