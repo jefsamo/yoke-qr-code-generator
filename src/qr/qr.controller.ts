@@ -15,7 +15,6 @@ export class QrController {
         console.error(err);
         res.status(500).send('Error generating QR code');
       } else {
-        console.log(url);
         res.send(url);
       }
     });
