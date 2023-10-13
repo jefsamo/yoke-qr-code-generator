@@ -8,11 +8,16 @@ export class QrController {
   constructor(private readonly qrService: QrService) {}
 
   @Get()
-  async getQRCode(@Res() res: Response) {
+  getQRCode(@Res() res: Response) {
     const movieUrl = `https://qr-code-fe-sigma.vercel.app/movies`;
-    const qrCode = await qr.toDataURL(movieUrl);
-
-    res.setHeader('Content-Type', 'image/png');
-    res.send(qrCode);
+    qr.toDataURL(movieUrl, (err, url) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error generating QR code');
+      } else {
+        console.log(url);
+        res.send(url);
+      }
+    });
   }
 }
