@@ -13,6 +13,6 @@ export class QrController {
     const qrCode = await qr.toDataURL(movieUrl);
 
     res.setHeader('Content-Type', 'image/png');
-    res.send(Buffer.from(qrCode.split(',')[1], 'base64'));
+    res.send(qrCode);
   }
 }
